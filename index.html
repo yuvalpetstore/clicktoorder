@@ -15,16 +15,43 @@
     <link rel="manifest" href="data:application/json;charset=utf-8,{ &quot;name&quot;: &quot;הזמנה בקליק&quot;, &quot;short_name&quot;: &quot;הזמנה&quot;, &quot;start_url&quot;: &quot;index.html&quot;, &quot;display&quot;: &quot;standalone&quot;, &quot;background_color&quot;: &quot;#8A2BE2&quot;, &quot;theme_color&quot;: &quot;#FFD700&quot;, &quot;icons&quot;: [ { &quot;src&quot;: &quot;logo.png&quot;, &quot;sizes&quot;: &quot;192x192&quot;, &quot;type&quot;: &quot;image/png&quot; } ] }">
     <style>
         body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #8A2BE2; /* סגול */
+        }
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .collapsible {
+            background-color: #FFD700;
+            color: #8A2BE2;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: right;
+            outline: none;
+            font-size: 15px;
+        }
+        .active, .collapsible:hover {
+            background-color: #FFA500;
+        }
+        .content {
+            padding: 0 18px;
+            display: none;
+            overflow: hidden;
+            background-color: #f1f1f1;
+        }
+        .container {
+            flex-grow: 1;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            font-family: Arial, sans-serif;
-            flex-direction: column;
-            background-color: #8A2BE2; /* סגול */
+            padding: 20px;
         }
-        .container {
+        .order-box {
             text-align: center;
             z-index: 2;
             background-color: rgba(255, 255, 255, 0.9);
@@ -64,11 +91,11 @@
         .checkbox-container input {
             margin-right: 5px;
         }
-        #fallbackLink, #installPrompt {
+        #fallbackLink {
             margin-top: 10px;
         }
         .paw {
-            position: absolute;
+            position: fixed;
             font-size: 40px;
             opacity: 0.4;
             z-index: 1;
@@ -82,31 +109,56 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <img src="logo.png" alt="לוגו החברה" class="logo">
-        <div>
-            <button onclick="sendWhatsApp('רגילה')" aria-label="שלח הזמנה רגילה">הזמנה רגילה</button>
-            <button onclick="toggleSpecialOrder()" aria-label="פתח אפשרויות להזמנה מיוחדת">הזמנה מיוחדת</button>
-        </div>
-        <div id="specialOrderOptions">
-            <div class="checkbox-container">
-                <input type="checkbox" id="option1" value="אנא תשלחו את ההזמנה הרגילה">
-                <label for="option1">אנא תשלחו את ההזמנה הרגילה</label>
+    <div class="main-container">
+        <button class="collapsible">לחץ כאן להוראות הוספת האפליקציה למסך הבית</button>
+        <div class="content">
+            <h3>כיצד להוסיף את האפליקציה למסך הבית</h3>
+            <button id="platformToggle" onclick="togglePlatform()">החלף למכשיר אחר</button>
+            <div id="iosInstructions">
+                <ol>
+                    <li>פתח את האפליקציה בדפדפן Safari</li>
+                    <li>הקש על כפתור "שתף" (Share) בתחתית המסך</li>
+                    <li>גלול ובחר באפשרות "הוסף למסך הבית" (Add to Home Screen)</li>
+                    <li>הקש על "הוסף" (Add) בפינה הימנית העליונה</li>
+                </ol>
             </div>
-            <div class="checkbox-container">
-                <input type="checkbox" id="option2" value="הוסיפו לי 10 חטיפים במבצע של 90 שקלים">
-                <label for="option2">הוסיפו לי 10 חטיפים במבצע של 90 שקלים</label>
+            <div id="androidInstructions" style="display: none;">
+                <ol>
+                    <li>פתח את האפליקציה בדפדפן Chrome</li>
+                    <li>הקש על שלוש הנקודות בפינה הימנית העליונה</li>
+                    <li>בחר באפשרות "הוסף למסך הבית" (Add to Home screen)</li>
+                    <li>הקש על "הוסף" (Add)</li>
+                </ol>
             </div>
-            <div class="checkbox-container">
-                <input type="checkbox" id="option3" value="הוסיפו לי 11 שימורים לחתול ב 60 שקלים">
-                <label for="option3">הוסיפו לי 11 שימורים לחתול ב 60 שקלים</label>
+        </div>
+        
+        <div class="container">
+            <div class="order-box">
+                <img src="logo.png" alt="לוגו החברה" class="logo">
+                <div>
+                    <button onclick="sendWhatsApp('רגילה')" aria-label="שלח הזמנה רגילה">הזמנה רגילה</button>
+                    <button onclick="toggleSpecialOrder()" aria-label="פתח אפשרויות להזמנה מיוחדת">הזמנה מיוחדת</button>
+                </div>
+                <div id="specialOrderOptions">
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="option1" value="אנא תשלחו את ההזמנה הרגילה">
+                        <label for="option1">אנא תשלחו את ההזמנה הרגילה</label>
+                    </div>
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="option2" value="הוסיפו לי 10 חטיפים במבצע של 90 שקלים">
+                        <label for="option2">הוסיפו לי 10 חטיפים במבצע של 90 שקלים</label>
+                    </div>
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="option3" value="הוסיפו לי 11 שימורים לחתול ב 60 שקלים">
+                        <label for="option3">הוסיפו לי 11 שימורים לחתול ב 60 שקלים</label>
+                    </div>
+                    <button onclick="sendSpecialOrder()" aria-label="שלח הזמנה מיוחדת">שלח הזמנה מיוחדת</button>
+                </div>
+                <div id="fallbackLink" style="display: none;">
+                    אם הלינק לא נפתח אוטומטית, <a href="#" id="manualLink">לחץ כאן</a> לפתיחה ידנית
+                </div>
             </div>
-            <button onclick="sendSpecialOrder()" aria-label="שלח הזמנה מיוחדת">שלח הזמנה מיוחדת</button>
         </div>
-        <div id="fallbackLink" style="display: none;">
-            אם הלינק לא נפתח אוטומטית, <a href="#" id="manualLink">לחץ כאן</a> לפתיחה ידנית
-        </div>
-        <div id="installPrompt" style="display: none;">הוסף למסך הבית</div>
     </div>
 
     <script>
@@ -149,24 +201,37 @@
             sendWhatsApp('מיוחדת', message);
         }
 
-        let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            document.getElementById('installPrompt').style.display = 'block';
-        });
+        function togglePlatform() {
+            const iosInstructions = document.getElementById('iosInstructions');
+            const androidInstructions = document.getElementById('androidInstructions');
+            const toggleButton = document.getElementById('platformToggle');
 
-        document.getElementById('installPrompt').addEventListener('click', (e) => {
-            deferredPrompt.prompt();
-            deferredPrompt.userChoice.then((choiceResult) => {
-                if (choiceResult.outcome === 'accepted') {
-                    console.log('User accepted the install prompt');
+            if (iosInstructions.style.display === 'none') {
+                iosInstructions.style.display = 'block';
+                androidInstructions.style.display = 'none';
+                toggleButton.textContent = 'החלף לאנדרואיד';
+            } else {
+                iosInstructions.style.display = 'none';
+                androidInstructions.style.display = 'block';
+                toggleButton.textContent = 'החלף לאייפון';
+            }
+        }
+
+        // Toggle for collapsible
+        var coll = document.getElementsByClassName("collapsible");
+        var i;
+
+        for (i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.display === "block") {
+                    content.style.display = "none";
                 } else {
-                    console.log('User dismissed the install prompt');
+                    content.style.display = "block";
                 }
-                deferredPrompt = null;
             });
-        });
+        }
 
         // יצירת טביעות כפות
         for (let i = 0; i < 15; i++) {
