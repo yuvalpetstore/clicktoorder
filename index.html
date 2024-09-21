@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-Frame-Options" content="DENY">
     <title>הזמנה בקליק - מותאם</title>
     <!-- iOS meta tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -69,10 +70,10 @@
         .paw {
             position: absolute;
             font-size: 40px;
-            opacity: 0.4; /* שינוי לאטימות גבוהה יותר */
+            opacity: 0.4;
             z-index: 1;
             animation: float 20s infinite linear;
-            color: rgba(255, 255, 255, 0.7); /* הוספת צבע לבן שקוף לאימוג'י */
+            color: rgba(255, 255, 255, 0.7);
         }
         @keyframes float {
             0% { transform: translateY(100vh) rotate(0deg); }
@@ -84,8 +85,8 @@
     <div class="container">
         <img src="logo.png" alt="לוגו החברה" class="logo">
         <div>
-            <button onclick="sendWhatsApp('רגילה')">הזמנה רגילה</button>
-            <button onclick="toggleSpecialOrder()">הזמנה מיוחדת</button>
+            <button onclick="sendWhatsApp('רגילה')" aria-label="שלח הזמנה רגילה">הזמנה רגילה</button>
+            <button onclick="toggleSpecialOrder()" aria-label="פתח אפשרויות להזמנה מיוחדת">הזמנה מיוחדת</button>
         </div>
         <div id="specialOrderOptions">
             <div class="checkbox-container">
@@ -100,7 +101,7 @@
                 <input type="checkbox" id="option3" value="הוסיפו לי 11 שימורים לחתול ב 60 שקלים">
                 <label for="option3">הוסיפו לי 11 שימורים לחתול ב 60 שקלים</label>
             </div>
-            <button onclick="sendSpecialOrder()">שלח הזמנה מיוחדת</button>
+            <button onclick="sendSpecialOrder()" aria-label="שלח הזמנה מיוחדת">שלח הזמנה מיוחדת</button>
         </div>
         <div id="fallbackLink" style="display: none;">
             אם הלינק לא נפתח אוטומטית, <a href="#" id="manualLink">לחץ כאן</a> לפתיחה ידנית
@@ -167,19 +168,16 @@
             });
         });
 
-        function addPaws() {
-            for (let i = 0; i < 15; i++) {
-                const paw = document.createElement('div');
-                paw.classList.add('paw');
-                paw.innerHTML = '🐾';
-                paw.style.left = `${Math.random() * 100}vw`;
-                paw.style.animationDuration = `${15 + Math.random() * 10}s`;
-                paw.style.animationDelay = `-${Math.random() * 20}s`;
-                document.body.appendChild(paw);
-            }
+        // יצירת טביעות כפות
+        for (let i = 0; i < 15; i++) {
+            const paw = document.createElement('div');
+            paw.classList.add('paw');
+            paw.innerHTML = '🐾';
+            paw.style.left = `${Math.random() * 100}vw`;
+            paw.style.animationDuration = `${15 + Math.random() * 10}s`;
+            paw.style.animationDelay = `-${Math.random() * 20}s`;
+            document.body.appendChild(paw);
         }
-
-        addPaws();
     </script>
 </body>
 </html>
