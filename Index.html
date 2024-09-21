@@ -1,0 +1,42 @@
+Click to Order Web App
+Preview
+Code
+
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>הזמנה בקליק</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        button {
+            font-size: 24px;
+            padding: 20px 40px;
+            background-color: #25D366;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <button onclick="sendWhatsApp()">הזמנה בקליק</button>
+
+    <script>
+        function sendWhatsApp() {
+            const phoneNumber = '098844955';
+            const url = `https://wa.me/${phoneNumber}`;
+            window.open(url, '_blank');
+        }
+    </script>
+</body>
+</html>
