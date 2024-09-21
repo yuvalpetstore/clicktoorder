@@ -3,8 +3,8 @@
     "short_name": "הזמנה",
     "start_url": "index.html",
     "display": "standalone",
-    "background_color": "#ffffff",
-    "theme_color": "#25D366",
+    "background_color": "#8A2BE2",
+    "theme_color": "#FFD700",
     "icons": [
         {
             "src": "logo.png",
