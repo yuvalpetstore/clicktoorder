@@ -26,7 +26,7 @@ const CompactAddToHomeGuide = () => {
     <div className="bg-gray-100 rounded-lg p-2 max-w-xs mx-auto text-sm mb-4">
       <button 
         onClick={toggleOpen} 
-        className="flex justify-between items-center w-full text-right text-black"
+        className="flex justify-between items-center w-full text-right"
       >
         <span>{isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}</span>
         כיצד להוסיף את האפליקציה למסך הבית
@@ -39,7 +39,7 @@ const CompactAddToHomeGuide = () => {
           >
             החלף ל{platform === 'android' ? 'אייפון' : 'אנדרואיד'}
           </button>
-          <ol className="list-decimal list-inside space-y-1 text-right text-black">
+          <ol className="list-decimal list-inside space-y-1 text-right">
             {steps.map((step, index) => (
               <li key={index}>{step}</li>
             ))}
