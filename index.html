@@ -1,239 +1,165 @@
-<!DOCTYPE html>
-<html lang="he" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>הזמנה בקליק - מותאם</title>
-    <!-- iOS meta tags -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="apple-mobile-web-app-title" content="הזמנה בקליק">
-    <link rel="apple-touch-icon" href="logo.png">
-    <!-- Android meta tag -->
-    <meta name="mobile-web-app-capable" content="yes">
-    <link rel="manifest" href="manifest.json">
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            font-family: Arial, sans-serif;
-            flex-direction: column;
-            background-color: #8A2BE2; /* סגול */
-            color: #FFD700; /* צהוב - לטקסט */
-        }
-        .main-container {
-            text-align: center;
-            z-index: 2;
-            background-color: rgba(255, 255, 255, 0.3);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            max-width: 90%;
-            width: 400px;
-            margin-bottom: 20px;
-            backdrop-filter: blur(5px);
-        }
-        .logo {
-            width: 150px;
-            height: auto;
-            margin-bottom: 20px;
-        }
-        button {
-            font-size: 18px;
-            padding: 10px 20px;
-            background-color: #FFD700; /* צהוב */
-            color: #8A2BE2; /* סגול */
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 5px;
-            transition: background-color 0.3s, transform 0.3s;
-        }
-        button:hover {
-            background-color: #FFA500; /* כתום */
-            transform: scale(1.05);
-        }
-        #specialOrderOptions {
-            display: none;
-            margin-top: 10px;
-        }
-        .checkbox-container {
-            display: flex;
-            align-items: center;
-            margin: 5px 0;
-        }
-        .checkbox-container input {
-            margin-right: 5px;
-        }
-        #fallbackLink, #installPrompt {
-            margin-top: 10px;
-        }
-        .paw {
-            position: absolute;
-            font-size: 40px;
-            opacity: 0.4;
-            z-index: 1;
-            animation: float 20s infinite linear;
-            color: rgba(255, 255, 255, 0.7);
-        }
-        @keyframes float {
-            0% { transform: translateY(100vh) rotate(0deg); }
-            100% { transform: translateY(-100vh) rotate(360deg); }
-        }
-        #tipSection {
-            text-align: center;
-            z-index: 2;
-            background-color: rgba(255, 255, 255, 0.3);
-            padding: 20px;
-            border-radius: 10px;
-            max-width: 90%;
-            width: 400px;
-            backdrop-filter: blur(5px);
-        }
-        #tipImage {
-            max-width: 100%;
-            height: auto;
-            border-radius: 5px;
-            margin-top: 10px;
-        }
-        h3 {
-            color: #FFD700; /* צהוב */
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-        }
-        label {
-            color: #FFD700; /* צהוב */
-        }
-        a {
-            color: #FFD700; /* צהוב */
-        }
-    </style>
-</head>
-<body>
-    <div class="main-container">
-        <img src="logo.png" alt="לוגו החברה" class="logo">
+import React, { useState, useEffect } from 'react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
+
+const CompactAddToHomeGuide = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [platform, setPlatform] = useState('android');
+
+  const toggleOpen = () => setIsOpen(!isOpen);
+  const togglePlatform = () => setPlatform(p => p === 'android' ? 'ios' : 'android');
+
+  const androidSteps = [
+    "פתח תפריט דפדפן",
+    "בחר 'הוסף למסך הבית'",
+    "הקש 'הוסף'"
+  ];
+
+  const iosSteps = [
+    "הקש על כפתור שיתוף",
+    "בחר 'הוסף למסך הבית'",
+    "הקש 'הוסף'"
+  ];
+
+  const steps = platform === 'android' ? androidSteps : iosSteps;
+
+  return (
+    <div className="bg-gray-100 rounded-lg p-2 max-w-xs mx-auto text-sm mb-4">
+      <button 
+        onClick={toggleOpen} 
+        className="flex justify-between items-center w-full text-right text-black"
+      >
+        <span>{isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}</span>
+        כיצד להוסיף את האפליקציה למסך הבית
+      </button>
+      {isOpen && (
+        <div className="mt-2">
+          <button 
+            onClick={togglePlatform} 
+            className="mb-2 px-2 py-1 bg-blue-500 text-white rounded text-xs w-full"
+          >
+            החלף ל{platform === 'android' ? 'אייפון' : 'אנדרואיד'}
+          </button>
+          <ol className="list-decimal list-inside space-y-1 text-right text-black">
+            {steps.map((step, index) => (
+              <li key={index}>{step}</li>
+            ))}
+          </ol>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const App = () => {
+  const [tipImage, setTipImage] = useState('');
+
+  useEffect(() => {
+    addPaws();
+    setRandomTipImage();
+  }, []);
+
+  function sendWhatsApp(type, message = '') {
+    const phoneNumber = '972098844955';
+    let finalMessage = message || `אנא תשלחו את ההזמנה ה${type}.`;
+    const encodedMessage = encodeURIComponent(finalMessage);
+    
+    let url = `whatsapp://send?phone=${phoneNumber}&text=${encodedMessage}`;
+    
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    
+    if (isIOS) {
+      url = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+    }
+    
+    window.location.href = url;
+    
+    setTimeout(() => {
+      document.getElementById('fallbackLink').style.display = 'block';
+      document.getElementById('manualLink').href = url;
+    }, 2000);
+  }
+
+  function toggleSpecialOrder() {
+    const specialOrderOptions = document.getElementById('specialOrderOptions');
+    specialOrderOptions.style.display = specialOrderOptions.style.display === 'none' ? 'block' : 'none';
+  }
+
+  function sendSpecialOrder() {
+    const selectedOptions = Array.from(document.querySelectorAll('#specialOrderOptions input:checked'))
+      .map(checkbox => checkbox.value);
+    
+    if (selectedOptions.length === 0) {
+      alert('נא לבחור לפחות אפשרות אחת');
+      return;
+    }
+
+    const message = selectedOptions.join('\n');
+    sendWhatsApp('מיוחדת', message);
+  }
+
+  function addPaws() {
+    for (let i = 0; i < 15; i++) {
+      const paw = document.createElement('div');
+      paw.classList.add('paw');
+      paw.innerHTML = '🐾';
+      paw.style.left = `${Math.random() * 100}vw`;
+      paw.style.animationDuration = `${15 + Math.random() * 10}s`;
+      paw.style.animationDelay = `-${Math.random() * 20}s`;
+      document.body.appendChild(paw);
+    }
+  }
+
+  function getRandomTipImage() {
+    const tipImages = [
+      'tip1.png',
+      'tip2.png',
+      'tip3.png',
+      'tip4.png',
+      'tip5.png',
+      'tip6.png'
+    ];
+    const randomIndex = Math.floor(Math.random() * tipImages.length);
+    return tipImages[randomIndex];
+  }
+
+  function setRandomTipImage() {
+    setTipImage(getRandomTipImage());
+  }
+
+  return (
+    <div className="min-h-screen bg-purple-600 flex flex-col items-center justify-center text-yellow-300 p-4">
+      <div className="bg-white bg-opacity-30 rounded-lg p-6 backdrop-blur-sm max-w-md w-full mb-4">
+        <CompactAddToHomeGuide />
+        <img src="logo.png" alt="לוגו החברה" className="w-32 h-auto mx-auto mb-4" />
         <div>
-            <button onclick="sendWhatsApp('רגילה')">הזמנה רגילה</button>
-            <button onclick="toggleSpecialOrder()">הזמנה מיוחדת</button>
+          <button onClick={() => sendWhatsApp('רגילה')} className="bg-yellow-400 text-purple-700 px-4 py-2 rounded m-2 hover:bg-yellow-500 transition">הזמנה רגילה</button>
+          <button onClick={toggleSpecialOrder} className="bg-yellow-400 text-purple-700 px-4 py-2 rounded m-2 hover:bg-yellow-500 transition">הזמנה מיוחדת</button>
         </div>
-        <div id="specialOrderOptions">
-            <div class="checkbox-container">
-                <input type="checkbox" id="option1" value="אנא תשלחו את ההזמנה הרגילה">
-                <label for="option1">אנא תשלחו את ההזמנה הרגילה</label>
-            </div>
-            <div class="checkbox-container">
-                <input type="checkbox" id="option2" value="הוסיפו לי 10 חטיפים במבצע של 90 שקלים">
-                <label for="option2">הוסיפו לי 10 חטיפים במבצע של 90 שקלים</label>
-            </div>
-            <div class="checkbox-container">
-                <input type="checkbox" id="option3" value="הוסיפו לי 11 שימורים לחתול ב 60 שקלים">
-                <label for="option3">הוסיפו לי 11 שימורים לחתול ב 60 שקלים</label>
-            </div>
-            <button onclick="sendSpecialOrder()">שלח הזמנה מיוחדת</button>
+        <div id="specialOrderOptions" style={{ display: 'none' }}>
+          <div className="flex items-center my-2">
+            <input type="checkbox" id="option1" value="אנא תשלחו את ההזמנה הרגילה" className="mr-2" />
+            <label htmlFor="option1">אנא תשלחו את ההזמנה הרגילה</label>
+          </div>
+          <div className="flex items-center my-2">
+            <input type="checkbox" id="option2" value="הוסיפו לי 10 חטיפים במבצע של 90 שקלים" className="mr-2" />
+            <label htmlFor="option2">הוסיפו לי 10 חטיפים במבצע של 90 שקלים</label>
+          </div>
+          <div className="flex items-center my-2">
+            <input type="checkbox" id="option3" value="הוסיפו לי 11 שימורים לחתול ב 60 שקלים" className="mr-2" />
+            <label htmlFor="option3">הוסיפו לי 11 שימורים לחתול ב 60 שקלים</label>
+          </div>
+          <button onClick={sendSpecialOrder} className="bg-yellow-400 text-purple-700 px-4 py-2 rounded mt-2 hover:bg-yellow-500 transition">שלח הזמנה מיוחדת</button>
         </div>
-        <div id="fallbackLink" style="display: none;">
-            אם הלינק לא נפתח אוטומטית, <a href="#" id="manualLink">לחץ כאן</a> לפתיחה ידנית
+        <div id="fallbackLink" style={{ display: 'none' }} className="mt-4">
+          אם הלינק לא נפתח אוטומטית, <a href="#" id="manualLink" className="underline">לחץ כאן</a> לפתיחה ידנית
         </div>
-        <div id="installPrompt" style="display: none;">הוסף למסך הבית</div>
+      </div>
+      <div className="bg-white bg-opacity-30 rounded-lg p-6 backdrop-blur-sm max-w-md w-full">
+        <h3 className="text-xl font-bold mb-2">טיפ וטריק</h3>
+        <img src={tipImage} alt="טיפ וטריק" className="w-full h-auto rounded" />
+      </div>
     </div>
-    <div id="tipSection">
-        <h3>טיפ וטריק</h3>
-        <img id="tipImage" alt="טיפ וטריק">
-    </div>
+  );
+};
 
-    <script>
-        function sendWhatsApp(type, message = '') {
-            const phoneNumber = '972098844955';
-            let finalMessage = message || `אנא תשלחו את ההזמנה ה${type}.`;
-            const encodedMessage = encodeURIComponent(finalMessage);
-            
-            let url = `whatsapp://send?phone=${phoneNumber}&text=${encodedMessage}`;
-            
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-            
-            if (isIOS) {
-                url = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
-            }
-            
-            window.location.href = url;
-            
-            setTimeout(() => {
-                document.getElementById('fallbackLink').style.display = 'block';
-                document.getElementById('manualLink').href = url;
-            }, 2000);
-        }
-
-        function toggleSpecialOrder() {
-            const specialOrderOptions = document.getElementById('specialOrderOptions');
-            specialOrderOptions.style.display = specialOrderOptions.style.display === 'none' ? 'block' : 'none';
-        }
-
-        function sendSpecialOrder() {
-            const selectedOptions = Array.from(document.querySelectorAll('#specialOrderOptions input:checked'))
-                .map(checkbox => checkbox.value);
-            
-            if (selectedOptions.length === 0) {
-                alert('נא לבחור לפחות אפשרות אחת');
-                return;
-            }
-
-            const message = selectedOptions.join('\n');
-            sendWhatsApp('מיוחדת', message);
-        }
-
-        let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            document.getElementById('installPrompt').style.display = 'block';
-        });
-
-        document.getElementById('installPrompt').addEventListener('click', (e) => {
-            deferredPrompt.prompt();
-            deferredPrompt.userChoice.then((choiceResult) => {
-                if (choiceResult.outcome === 'accepted') {
-                    console.log('User accepted the install prompt');
-                } else {
-                    console.log('User dismissed the install prompt');
-                }
-                deferredPrompt = null;
-            });
-        });
-
-        function addPaws() {
-            for (let i = 0; i < 15; i++) {
-                const paw = document.createElement('div');
-                paw.classList.add('paw');
-                paw.innerHTML = '🐾';
-                paw.style.left = `${Math.random() * 100}vw`;
-                paw.style.animationDuration = `${15 + Math.random() * 10}s`;
-                paw.style.animationDelay = `-${Math.random() * 20}s`;
-                document.body.appendChild(paw);
-            }
-        }
-
-        function getRandomTipImage() {
-            const tipImages = [
-                'tip1.png',
-                'tip2.png',
-                'tip3.png',
-                'tip4.png',
-                'tip5.png',
-                'tip6.png'
-            ];
-            const randomIndex = Math.floor(Math.random() * tipImages.length);
-            return tipImages[randomIndex];
-        }
-
-        function setRandomTipImage() {
-            const tipImage = document.getElementById('tipImage');
-            tipImage.src = getRandomTipImage();
-        }
-
-        addPaws();
-        setRandomTipImage();
-    </script>
-</body>
-</html>
+export default App;
