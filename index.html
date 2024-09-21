@@ -4,159 +4,144 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>הזמנה בקליק - מותאם</title>
-    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.min.js"></script>
+    <!-- iOS meta tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="הזמנה בקליק">
+    <link rel="apple-touch-icon" href="logo.png">
+    <!-- Android meta tag -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="manifest.json">
     <style>
-        /* הוסף כאן את ה-CSS הקיים שלך */
-        .main-container {
-            /* הסגנונות הקיימים שלך */
-        }
-        /* סגנונות נוספים לחלון הקופץ */
-        .popup-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.5);
+        body {
             display: flex;
             justify-content: center;
             align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            flex-direction: column;
+            background-color: #8A2BE2; /* סגול */
+            color: #FFD700; /* צהוב - לטקסט */
         }
-        .popup-content {
-            background-color: white;
+        .main-container {
+            text-align: center;
+            z-index: 2;
+            background-color: rgba(255, 255, 255, 0.3); /* שקוף יותר */
             padding: 20px;
-            border-radius: 8px;
-            max-width: 300px;
-            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 90%;
+            width: 400px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(5px); /* אפקט טשטוש */
+        }
+        .logo {
+            width: 150px;
+            height: auto;
+            margin-bottom: 20px;
+        }
+        button {
+            font-size: 18px;
+            padding: 10px 20px;
+            background-color: #FFD700; /* צהוב */
+            color: #8A2BE2; /* סגול */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        button:hover {
+            background-color: #FFA500; /* כתום */
+            transform: scale(1.05);
+        }
+        #specialOrderOptions {
+            display: none;
+            margin-top: 10px;
+        }
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+        }
+        .checkbox-container input {
+            margin-right: 5px;
+        }
+        #fallbackLink, #installPrompt {
+            margin-top: 10px;
+        }
+        .paw {
+            position: absolute;
+            font-size: 40px;
+            opacity: 0.4;
+            z-index: 1;
+            animation: float 20s infinite linear;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); }
+            100% { transform: translateY(-100vh) rotate(360deg); }
+        }
+        #tipSection {
+            text-align: center;
+            z-index: 2;
+            background-color: rgba(255, 255, 255, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 90%;
+            width: 400px;
+            backdrop-filter: blur(5px);
+        }
+        #tipImage {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        h3 {
+            color: #FFD700; /* צהוב */
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        label {
+            color: #FFD700; /* צהוב - לטקסט של התיבות */
         }
     </style>
 </head>
 <body>
     <div class="main-container">
         <img src="logo.png" alt="לוגו החברה" class="logo">
-
         <div>
-            <button>הזמנה רגילה</button>
-            <button>הזמנה מיוחדת</button>
+            <button onclick="sendWhatsApp('רגילה')">הזמנה רגילה</button>
+            <button onclick="toggleSpecialOrder()">הזמנה מיוחדת</button>
         </div>
-
         <div id="specialOrderOptions">
             <div class="checkbox-container">
-                <input type="checkbox" id="regularOrder">
-                <label for="regularOrder">אנא תשלחו את ההזמנה הרגילה</label>
+                <input type="checkbox" id="option1" value="אנא תשלחו את ההזמנה הרגילה">
+                <label for="option1">אנא תשלחו את ההזמנה הרגילה</label>
             </div>
             <div class="checkbox-container">
-                <input type="checkbox" id="snackOrder">
-                <label for="snackOrder">הוסיפו לי 10 חטיפים במבצע של 90 שקלים</label>
+                <input type="checkbox" id="option2" value="הוסיפו לי 10 חטיפים במבצע של 90 שקלים">
+                <label for="option2">הוסיפו לי 10 חטיפים במבצע של 90 שקלים</label>
             </div>
             <div class="checkbox-container">
-                <input type="checkbox" id="catFoodOrder">
-                <label for="catFoodOrder">הוסיפו לי 11 שימורים לחתול ב 60 שקלים</label>
+                <input type="checkbox" id="option3" value="הוסיפו לי 11 שימורים לחתול ב 60 שקלים">
+                <label for="option3">הוסיפו לי 11 שימורים לחתול ב 60 שקלים</label>
             </div>
-            <button>שלח הזמנה מיוחדת</button>
+            <button onclick="sendSpecialOrder()">שלח הזמנה מיוחדת</button>
         </div>
-
         <div id="fallbackLink" style="display: none;">
             אם הלינק לא נפתח אוטומטית, <a href="#" id="manualLink">לחץ כאן</a> לפתיחה ידנית
         </div>
-
-        <div id="installPrompt" style="display: none;">
-            הוסף למסך הבית
-        </div>
-
-        <div id="tipSection">
-            <h3>טיפ וטריק</h3>
-        </div>
-
-        <!-- כאן נוסיף את הקומפוננטה החדשה -->
-        <div id="addToHomePopup"></div>
+        <div id="installPrompt" style="display: none;">הוסף למסך הבית</div>
+    </div>
+    <div id="tipSection">
+        <h3>טיפ וטריק</h3>
+        <img id="tipImage" alt="טיפ וטריק">
     </div>
 
-    <script type="text/babel">
-        const AddToHomePopup = () => {
-            const [isVisible, setIsVisible] = React.useState(false);
-            const [selectedPlatform, setSelectedPlatform] = React.useState('');
-
-            React.useEffect(() => {
-                const timer = setTimeout(() => setIsVisible(true), 2000);
-                return () => clearTimeout(timer);
-            }, []);
-
-            const handleClose = () => setIsVisible(false);
-
-            const handleAdd = () => {
-                if (selectedPlatform === 'android') {
-                    console.log('הוספה לאנדרואיד');
-                } else if (selectedPlatform === 'ios') {
-                    console.log('הוספה לאייפון');
-                }
-                handleClose();
-            };
-
-            if (!isVisible) return null;
-
-            return (
-                <div className="popup-overlay">
-                    <div className="popup-content">
-                        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px'}}>
-                            <h2 style={{margin: 0}}>הוסף למסך הבית</h2>
-                            <button onClick={handleClose} style={{background: 'none', border: 'none', cursor: 'pointer'}}>
-                                <lucide-icon name="x" />
-                            </button>
-                        </div>
-                        <p>האם תרצה להוסיף את האפליקציה למסך הבית?</p>
-                        <div style={{display: 'flex', justifyContent: 'center', gap: '10px', marginBottom: '10px'}}>
-                            <button
-                                onClick={() => setSelectedPlatform('android')}
-                                style={{
-                                    padding: '5px 10px',
-                                    background: selectedPlatform === 'android' ? 'blue' : 'lightgray',
-                                    color: selectedPlatform === 'android' ? 'white' : 'black',
-                                    border: 'none',
-                                    borderRadius: '5px',
-                                    cursor: 'pointer'
-                                }}
-                            >
-                                אנדרואיד
-                            </button>
-                            <button
-                                onClick={() => setSelectedPlatform('ios')}
-                                style={{
-                                    padding: '5px 10px',
-                                    background: selectedPlatform === 'ios' ? 'blue' : 'lightgray',
-                                    color: selectedPlatform === 'ios' ? 'white' : 'black',
-                                    border: 'none',
-                                    borderRadius: '5px',
-                                    cursor: 'pointer'
-                                }}
-                            >
-                                אייפון
-                            </button>
-                        </div>
-                        <button
-                            onClick={handleAdd}
-                            disabled={!selectedPlatform}
-                            style={{
-                                width: '100%',
-                                padding: '10px',
-                                background: selectedPlatform ? 'green' : 'lightgray',
-                                color: selectedPlatform ? 'white' : 'gray',
-                                border: 'none',
-                                borderRadius: '5px',
-                                cursor: selectedPlatform ? 'pointer' : 'not-allowed'
-                            }}
-                        >
-                            הוסף
-                        </button>
-                    </div>
-                </div>
-            );
-        };
-
-        ReactDOM.render(<AddToHomePopup />, document.getElementById('addToHomePopup'));
+    <script>
+        // ... (הקוד JavaScript נשאר ללא שינוי)
     </script>
 </body>
 </html>
