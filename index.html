@@ -1,7 +1,3 @@
-Click to Order Web App
-Preview
-Code
-
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
@@ -16,6 +12,13 @@ Code
             height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
+            flex-direction: column;
+            background-color: #f0f0f0;
+        }
+        .logo {
+            width: 150px;
+            height: auto;
+            margin-bottom: 20px;
         }
         button {
             font-size: 24px;
@@ -25,17 +28,45 @@ Code
             border: none;
             border-radius: 10px;
             cursor: pointer;
+            margin-bottom: 20px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #128C7E;
+        }
+        #fallbackLink {
+            display: none;
+            text-align: center;
         }
     </style>
 </head>
 <body>
+    <img src="logo.png" alt="לוגו החברה" class="logo">
     <button onclick="sendWhatsApp()">הזמנה בקליק</button>
+    <div id="fallbackLink">
+        אם הלינק לא נפתח אוטומטית, <a href="#" id="manualLink">לחץ כאן</a> לפתיחה ידנית
+    </div>
 
     <script>
         function sendWhatsApp() {
-            const phoneNumber = '97298844955';
-            const url = `https://wa.me/${phoneNumber}`;
-            window.open(url, '_blank');
+            const phoneNumber = '972098844955';
+            const message = 'היי, אני מעוניין להזמין.';
+            const encodedMessage = encodeURIComponent(message);
+            
+            let url = `whatsapp://send?phone=${phoneNumber}&text=${encodedMessage}`;
+            
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            
+            if (isIOS) {
+                url = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+            }
+            
+            window.location.href = url;
+            
+            setTimeout(() => {
+                document.getElementById('fallbackLink').style.display = 'block';
+                document.getElementById('manualLink').href = url;
+            }, 2000);
         }
     </script>
 </body>
