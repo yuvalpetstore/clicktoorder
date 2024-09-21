@@ -30,6 +30,8 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 90%;
+            width: 400px;
         }
         .logo {
             width: 150px;
@@ -69,14 +71,23 @@
         .paw {
             position: absolute;
             font-size: 40px;
-            opacity: 0.4; /* שינוי לאטימות גבוהה יותר */
+            opacity: 0.4;
             z-index: 1;
             animation: float 20s infinite linear;
-            color: rgba(255, 255, 255, 0.7); /* הוספת צבע לבן שקוף לאימוג'י */
+            color: rgba(255, 255, 255, 0.7);
         }
         @keyframes float {
             0% { transform: translateY(100vh) rotate(0deg); }
             100% { transform: translateY(-100vh) rotate(360deg); }
+        }
+        #tipSection {
+            margin-top: 20px;
+        }
+        #tipImage {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -106,6 +117,10 @@
             אם הלינק לא נפתח אוטומטית, <a href="#" id="manualLink">לחץ כאן</a> לפתיחה ידנית
         </div>
         <div id="installPrompt" style="display: none;">הוסף למסך הבית</div>
+        <div id="tipSection">
+            <h3>טיפ וטריק</h3>
+            <img id="tipImage" alt="טיפ וטריק">
+        </div>
     </div>
 
     <script>
@@ -179,7 +194,26 @@
             }
         }
 
+        function getRandomTipImage() {
+            const tipImages = [
+                'tip1.jpg',
+                'tip2.jpg',
+                'tip3.jpg',
+                'tip4.jpg',
+                'tip5.jpg',
+                'tip6.jpg'
+            ];
+            const randomIndex = Math.floor(Math.random() * tipImages.length);
+            return tipImages[randomIndex];
+        }
+
+        function setRandomTipImage() {
+            const tipImage = document.getElementById('tipImage');
+            tipImage.src = getRandomTipImage();
+        }
+
         addPaws();
+        setRandomTipImage();
     </script>
 </body>
 </html>
