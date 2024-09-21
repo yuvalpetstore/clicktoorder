@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>הזמנה בקליק</title>
+    <!-- iOS meta tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="הזמנה בקליק">
+    <link rel="apple-touch-icon" href="logo.png">
+    <!-- Android meta tag -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="manifest.json">
     <style>
         body {
             display: flex;
@@ -38,6 +46,15 @@
             display: none;
             text-align: center;
         }
+        #installPrompt {
+            display: none;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -46,11 +63,12 @@
     <div id="fallbackLink">
         אם הלינק לא נפתח אוטומטית, <a href="#" id="manualLink">לחץ כאן</a> לפתיחה ידנית
     </div>
+    <div id="installPrompt">הוסף למסך הבית</div>
 
     <script>
         function sendWhatsApp() {
             const phoneNumber = '972098844955';
-            const message = 'בבקשה תשלחו לי את ההזמנה הרגילה.';
+            const message = 'בבקשה שילחו לי את ההזמנה הרגילה.';
             const encodedMessage = encodeURIComponent(message);
             
             let url = `whatsapp://send?phone=${phoneNumber}&text=${encodedMessage}`;
@@ -68,6 +86,25 @@
                 document.getElementById('manualLink').href = url;
             }, 2000);
         }
+
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installPrompt').style.display = 'block';
+        });
+
+        document.getElementById('installPrompt').addEventListener('click', (e) => {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    console.log('User accepted the install prompt');
+                } else {
+                    console.log('User dismissed the install prompt');
+                }
+                deferredPrompt = null;
+            });
+        });
     </script>
 </body>
 </html>
