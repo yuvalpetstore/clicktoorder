@@ -22,16 +22,19 @@
             font-family: Arial, sans-serif;
             flex-direction: column;
             background-color: #8A2BE2; /* סגול */
+            color: #FFD700; /* צהוב - לטקסט */
         }
-        .container {
+        .main-container {
             text-align: center;
             z-index: 2;
-            background-color: rgba(255, 255, 255, 0.9);
+            background-color: rgba(255, 255, 255, 0.3);
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             max-width: 90%;
             width: 400px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(5px);
         }
         .logo {
             width: 150px;
@@ -81,7 +84,14 @@
             100% { transform: translateY(-100vh) rotate(360deg); }
         }
         #tipSection {
-            margin-top: 20px;
+            text-align: center;
+            z-index: 2;
+            background-color: rgba(255, 255, 255, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 90%;
+            width: 400px;
+            backdrop-filter: blur(5px);
         }
         #tipImage {
             max-width: 100%;
@@ -89,10 +99,20 @@
             border-radius: 5px;
             margin-top: 10px;
         }
+        h3 {
+            color: #FFD700; /* צהוב */
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        label {
+            color: #FFD700; /* צהוב */
+        }
+        a {
+            color: #FFD700; /* צהוב */
+        }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="main-container">
         <img src="logo.png" alt="לוגו החברה" class="logo">
         <div>
             <button onclick="sendWhatsApp('רגילה')">הזמנה רגילה</button>
@@ -117,10 +137,10 @@
             אם הלינק לא נפתח אוטומטית, <a href="#" id="manualLink">לחץ כאן</a> לפתיחה ידנית
         </div>
         <div id="installPrompt" style="display: none;">הוסף למסך הבית</div>
-        <div id="tipSection">
-            <h3>טיפ וטריק</h3>
-            <img id="tipImage" alt="טיפ וטריק">
-        </div>
+    </div>
+    <div id="tipSection">
+        <h3>טיפ וטריק</h3>
+        <img id="tipImage" alt="טיפ וטריק">
     </div>
 
     <script>
