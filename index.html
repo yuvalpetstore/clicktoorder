@@ -21,39 +21,58 @@
             margin: 0;
             font-family: Arial, sans-serif;
             flex-direction: column;
-            background-color: #ffffff; /* שינוי הרקע ללבן */
+            background-color: #8A2BE2; /* סגול */
+            position: relative;
+            overflow: hidden;
         }
         .logo {
             width: 150px;
             height: auto;
             margin-bottom: 20px;
+            z-index: 2;
         }
         button {
             font-size: 24px;
             padding: 20px 40px;
-            background-color: #25D366;
-            color: white;
+            background-color: #FFD700; /* צהוב */
+            color: #8A2BE2; /* סגול */
             border: none;
             border-radius: 10px;
             cursor: pointer;
             margin-bottom: 20px;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, transform 0.3s;
+            z-index: 2;
         }
         button:hover {
-            background-color: #128C7E;
+            background-color: #FFA500; /* כתום כהה יותר בהובר */
+            transform: scale(1.05);
         }
         #fallbackLink {
             display: none;
             text-align: center;
+            color: #FFD700; /* צהוב */
+            z-index: 2;
         }
         #installPrompt {
             display: none;
             margin-top: 20px;
             padding: 10px;
-            background-color: #4CAF50;
-            color: white;
+            background-color: #FFD700; /* צהוב */
+            color: #8A2BE2; /* סגול */
             border-radius: 5px;
             cursor: pointer;
+            z-index: 2;
+        }
+        .paw {
+            position: absolute;
+            font-size: 40px;
+            opacity: 0.2;
+            z-index: 1;
+            animation: float 20s infinite linear;
+        }
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); }
+            100% { transform: translateY(-100vh) rotate(360deg); }
         }
     </style>
 </head>
@@ -61,7 +80,7 @@
     <img src="logo.png" alt="לוגו החברה" class="logo">
     <button onclick="sendWhatsApp()">הזמנה בקליק</button>
     <div id="fallbackLink">
-        אם הלינק לא נפתח אוטומטית, <a href="#" id="manualLink">לחץ כאן</a> לפתיחה ידנית
+        אם הלינק לא נפתח אוטומטית, <a href="#" id="manualLink" style="color: #FFD700;">לחץ כאן</a> לפתיחה ידנית
     </div>
     <div id="installPrompt">הוסף למסך הבית</div>
 
@@ -105,6 +124,20 @@
                 deferredPrompt = null;
             });
         });
+
+        // הוספת אימוג'י של כף רגל של כלב
+        function addPaws() {
+            for (let i = 0; i < 15; i++) {
+                const paw = document.createElement('div');
+                paw.classList.add('paw');
+                paw.innerHTML = '🐾';
+                paw.style.left = `${Math.random() * 100}vw`;
+                paw.style.animationDuration = `${15 + Math.random() * 10}s`;
+                paw.style.animationDelay = `-${Math.random() * 20}s`;
+                document.body.appendChild(paw);
+            }
+        }
+        addPaws();
     </script>
 </body>
 </html>
