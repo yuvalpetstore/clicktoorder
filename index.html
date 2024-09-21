@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>הזמנה בקליק</title>
+    <title>הזמנה בקליק - מותאם</title>
     <!-- iOS meta tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -17,51 +17,54 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
             flex-direction: column;
             background-color: #8A2BE2; /* סגול */
-            position: relative;
-            overflow: hidden;
+        }
+        .container {
+            text-align: center;
+            z-index: 2;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
         .logo {
             width: 150px;
             height: auto;
             margin-bottom: 20px;
-            z-index: 2;
         }
         button {
-            font-size: 24px;
-            padding: 20px 40px;
+            font-size: 18px;
+            padding: 10px 20px;
             background-color: #FFD700; /* צהוב */
             color: #8A2BE2; /* סגול */
             border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            margin-bottom: 20px;
-            transition: background-color 0.3s, transform 0.3s;
-            z-index: 2;
-        }
-        button:hover {
-            background-color: #FFA500; /* כתום כהה יותר בהובר */
-            transform: scale(1.05);
-        }
-        #fallbackLink {
-            display: none;
-            text-align: center;
-            color: #FFD700; /* צהוב */
-            z-index: 2;
-        }
-        #installPrompt {
-            display: none;
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #FFD700; /* צהוב */
-            color: #8A2BE2; /* סגול */
             border-radius: 5px;
             cursor: pointer;
-            z-index: 2;
+            margin: 5px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        button:hover {
+            background-color: #FFA500; /* כתום */
+            transform: scale(1.05);
+        }
+        #specialOrderOptions {
+            display: none;
+            margin-top: 10px;
+        }
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+        }
+        .checkbox-container input {
+            margin-right: 5px;
+        }
+        #fallbackLink, #installPrompt {
+            margin-top: 10px;
         }
         .paw {
             position: absolute;
@@ -77,18 +80,38 @@
     </style>
 </head>
 <body>
-    <img src="logo.png" alt="לוגו החברה" class="logo">
-    <button onclick="sendWhatsApp()">הזמנה בקליק</button>
-    <div id="fallbackLink">
-        אם הלינק לא נפתח אוטומטית, <a href="#" id="manualLink" style="color: #FFD700;">לחץ כאן</a> לפתיחה ידנית
+    <div class="container">
+        <img src="logo.png" alt="לוגו החברה" class="logo">
+        <div>
+            <button onclick="sendWhatsApp('רגילה')">הזמנה רגילה</button>
+            <button onclick="toggleSpecialOrder()">הזמנה מיוחדת</button>
+        </div>
+        <div id="specialOrderOptions">
+            <div class="checkbox-container">
+                <input type="checkbox" id="option1" value="אנא תשלחו את ההזמנה הרגילה">
+                <label for="option1">אנא תשלחו את ההזמנה הרגילה</label>
+            </div>
+            <div class="checkbox-container">
+                <input type="checkbox" id="option2" value="הוסיפו לי 10 חטיפים במבצע של 90 שקלים">
+                <label for="option2">הוסיפו לי 10 חטיפים במבצע של 90 שקלים</label>
+            </div>
+            <div class="checkbox-container">
+                <input type="checkbox" id="option3" value="הוסיפו לי 11 שימורים לחתול ב 60 שקלים">
+                <label for="option3">הוסיפו לי 11 שימורים לחתול ב 60 שקלים</label>
+            </div>
+            <button onclick="sendSpecialOrder()">שלח הזמנה מיוחדת</button>
+        </div>
+        <div id="fallbackLink" style="display: none;">
+            אם הלינק לא נפתח אוטומטית, <a href="#" id="manualLink">לחץ כאן</a> לפתיחה ידנית
+        </div>
+        <div id="installPrompt" style="display: none;">הוסף למסך הבית</div>
     </div>
-    <div id="installPrompt">הוסף למסך הבית</div>
 
     <script>
-        function sendWhatsApp() {
+        function sendWhatsApp(type, message = '') {
             const phoneNumber = '972098844955';
-            const message = 'בבקשה שילחו לי את ההזמנה הרגילה.';
-            const encodedMessage = encodeURIComponent(message);
+            let finalMessage = message || `אנא תשלחו את ההזמנה ה${type}.`;
+            const encodedMessage = encodeURIComponent(finalMessage);
             
             let url = `whatsapp://send?phone=${phoneNumber}&text=${encodedMessage}`;
             
@@ -104,6 +127,24 @@
                 document.getElementById('fallbackLink').style.display = 'block';
                 document.getElementById('manualLink').href = url;
             }, 2000);
+        }
+
+        function toggleSpecialOrder() {
+            const specialOrderOptions = document.getElementById('specialOrderOptions');
+            specialOrderOptions.style.display = specialOrderOptions.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function sendSpecialOrder() {
+            const selectedOptions = Array.from(document.querySelectorAll('#specialOrderOptions input:checked'))
+                .map(checkbox => checkbox.value);
+            
+            if (selectedOptions.length === 0) {
+                alert('נא לבחור לפחות אפשרות אחת');
+                return;
+            }
+
+            const message = selectedOptions.join('\n');
+            sendWhatsApp('מיוחדת', message);
         }
 
         let deferredPrompt;
@@ -125,7 +166,6 @@
             });
         });
 
-        // הוספת אימוג'י של כף רגל של כלב
         function addPaws() {
             for (let i = 0; i < 15; i++) {
                 const paw = document.createElement('div');
@@ -137,6 +177,7 @@
                 document.body.appendChild(paw);
             }
         }
+
         addPaws();
     </script>
 </body>
