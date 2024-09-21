@@ -1,21 +1,79 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
-<html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>הזמנה בקליק</title>
     <!-- iOS meta tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="הזמנה בקליק">
     <link rel="apple-touch-icon" href="logo.png">
     <!-- Android meta tag -->
     <meta name="mobile-web-app-capable" content="yes">
-    <link rel="icon" type="image/png" href="logo.png">
     <link rel="manifest" href="manifest.json">
     <style>
-        /* השאר את כל ה-CSS הקיים כאן */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            flex-direction: column;
+            background-color: #8A2BE2; /* סגול */
+            position: relative;
+            overflow: hidden;
+        }
+        .logo {
+            width: 150px;
+            height: auto;
+            margin-bottom: 20px;
+            z-index: 2;
+        }
+        button {
+            font-size: 24px;
+            padding: 20px 40px;
+            background-color: #FFD700; /* צהוב */
+            color: #8A2BE2; /* סגול */
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: background-color 0.3s, transform 0.3s;
+            z-index: 2;
+        }
+        button:hover {
+            background-color: #FFA500; /* כתום כהה יותר בהובר */
+            transform: scale(1.05);
+        }
+        #fallbackLink {
+            display: none;
+            text-align: center;
+            color: #FFD700; /* צהוב */
+            z-index: 2;
+        }
+        #installPrompt {
+            display: none;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #FFD700; /* צהוב */
+            color: #8A2BE2; /* סגול */
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 2;
+        }
+        .paw {
+            position: absolute;
+            font-size: 40px;
+            opacity: 0.2;
+            z-index: 1;
+            animation: float 20s infinite linear;
+        }
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); }
+            100% { transform: translateY(-100vh) rotate(360deg); }
+        }
     </style>
 </head>
 <body>
