@@ -2,142 +2,79 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>הזמנה בקליק</title>
     <!-- iOS meta tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="הזמנה בקליק">
     <link rel="apple-touch-icon" href="logo.png">
     <!-- Android meta tag -->
     <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" type="image/png" href="logo.png">
     <link rel="manifest" href="manifest.json">
     <style>
-        body {
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+        }
+        #header {
+            background-color: #8A2BE2;
+            color: #FFD700;
+            text-align: center;
+            padding: 10px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        #website-frame {
+            width: 100%;
+            height: calc(100% - 50px); /* Subtracting header height */
+            border: none;
+        }
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-            font-family: Arial, sans-serif;
-            flex-direction: column;
-            background-color: #8A2BE2; /* סגול */
-            position: relative;
-            overflow: hidden;
+            z-index: 1000;
         }
-        .logo {
-            width: 150px;
-            height: auto;
-            margin-bottom: 20px;
-            z-index: 2;
+        .loading-spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #8A2BE2;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
         }
-        button {
-            font-size: 24px;
-            padding: 20px 40px;
-            background-color: #FFD700; /* צהוב */
-            color: #8A2BE2; /* סגול */
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            margin-bottom: 20px;
-            transition: background-color 0.3s, transform 0.3s;
-            z-index: 2;
-        }
-        button:hover {
-            background-color: #FFA500; /* כתום כהה יותר בהובר */
-            transform: scale(1.05);
-        }
-        #fallbackLink {
-            display: none;
-            text-align: center;
-            color: #FFD700; /* צהוב */
-            z-index: 2;
-        }
-        #installPrompt {
-            display: none;
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #FFD700; /* צהוב */
-            color: #8A2BE2; /* סגול */
-            border-radius: 5px;
-            cursor: pointer;
-            z-index: 2;
-        }
-        .paw {
-            position: absolute;
-            font-size: 40px;
-            opacity: 0.2;
-            z-index: 1;
-            animation: float 20s infinite linear;
-        }
-        @keyframes float {
-            0% { transform: translateY(100vh) rotate(0deg); }
-            100% { transform: translateY(-100vh) rotate(360deg); }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <img src="logo.png" alt="לוגו החברה" class="logo">
-    <button onclick="sendWhatsApp()">הזמנה בקליק</button>
-    <div id="fallbackLink">
-        אם הלינק לא נפתח אוטומטית, <a href="#" id="manualLink" style="color: #FFD700;">לחץ כאן</a> לפתיחה ידנית
+    <div id="header">הזמנה בקליק</div>
+    <iframe id="website-frame" src="https://petsfood.co.il/"></iframe>
+    <div class="loading">
+        <div class="loading-spinner"></div>
     </div>
-    <div id="installPrompt">הוסף למסך הבית</div>
 
     <script>
-        function sendWhatsApp() {
-            const phoneNumber = '972098844955';
-            const message = 'בבקשה שילחו לי את ההזמנה הרגילה.';
-            const encodedMessage = encodeURIComponent(message);
-            
-            let url = `whatsapp://send?phone=${phoneNumber}&text=${encodedMessage}`;
-            
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-            
-            if (isIOS) {
-                url = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
-            }
-            
-            window.location.href = url;
-            
-            setTimeout(() => {
-                document.getElementById('fallbackLink').style.display = 'block';
-                document.getElementById('manualLink').href = url;
-            }, 2000);
-        }
-
-        let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            document.getElementById('installPrompt').style.display = 'block';
+        window.addEventListener('load', function() {
+            document.querySelector('.loading').style.display = 'none';
         });
 
-        document.getElementById('installPrompt').addEventListener('click', (e) => {
-            deferredPrompt.prompt();
-            deferredPrompt.userChoice.then((choiceResult) => {
-                if (choiceResult.outcome === 'accepted') {
-                    console.log('User accepted the install prompt');
-                } else {
-                    console.log('User dismissed the install prompt');
-                }
-                deferredPrompt = null;
-            });
+        document.getElementById('website-frame').addEventListener('load', function() {
+            document.querySelector('.loading').style.display = 'none';
         });
-
-        // הוספת אימוג'י של כף רגל של כלב
-        function addPaws() {
-            for (let i = 0; i < 15; i++) {
-                const paw = document.createElement('div');
-                paw.classList.add('paw');
-                paw.innerHTML = '🐾';
-                paw.style.left = `${Math.random() * 100}vw`;
-                paw.style.animationDuration = `${15 + Math.random() * 10}s`;
-                paw.style.animationDelay = `-${Math.random() * 20}s`;
-                document.body.appendChild(paw);
-            }
-        }
-        addPaws();
     </script>
 </body>
 </html>
