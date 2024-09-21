@@ -22,19 +22,17 @@
             font-family: Arial, sans-serif;
             flex-direction: column;
             background-color: #8A2BE2; /* סגול */
-            color: #FFD700; /* צהוב - לטקסט */
         }
         .main-container {
             text-align: center;
             z-index: 2;
-            background-color: rgba(255, 255, 255, 0.3); /* שקוף יותר */
+            background-color: rgba(255, 255, 255, 0.9);
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             max-width: 90%;
             width: 400px;
             margin-bottom: 20px;
-            backdrop-filter: blur(5px); /* אפקט טשטוש */
         }
         .logo {
             width: 150px;
@@ -86,12 +84,11 @@
         #tipSection {
             text-align: center;
             z-index: 2;
-            background-color: rgba(255, 255, 255, 0.3);
+            background-color: rgba(255, 255, 255, 0.5);
             padding: 20px;
             border-radius: 10px;
             max-width: 90%;
             width: 400px;
-            backdrop-filter: blur(5px);
         }
         #tipImage {
             max-width: 100%;
@@ -102,9 +99,6 @@
         h3 {
             color: #FFD700; /* צהוב */
             text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-        }
-        label {
-            color: #FFD700; /* צהוב - לטקסט של התיבות */
         }
     </style>
 </head>
@@ -141,7 +135,96 @@
     </div>
 
     <script>
-        // ... (הקוד JavaScript נשאר ללא שינוי)
+        function sendWhatsApp(type, message = '') {
+            const phoneNumber = '972098844955';
+            let finalMessage = message || `אנא תשלחו את ההזמנה ה${type}.`;
+            const encodedMessage = encodeURIComponent(finalMessage);
+            
+            let url = `whatsapp://send?phone=${phoneNumber}&text=${encodedMessage}`;
+            
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            
+            if (isIOS) {
+                url = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+            }
+            
+            window.location.href = url;
+            
+            setTimeout(() => {
+                document.getElementById('fallbackLink').style.display = 'block';
+                document.getElementById('manualLink').href = url;
+            }, 2000);
+        }
+
+        function toggleSpecialOrder() {
+            const specialOrderOptions = document.getElementById('specialOrderOptions');
+            specialOrderOptions.style.display = specialOrderOptions.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function sendSpecialOrder() {
+            const selectedOptions = Array.from(document.querySelectorAll('#specialOrderOptions input:checked'))
+                .map(checkbox => checkbox.value);
+            
+            if (selectedOptions.length === 0) {
+                alert('נא לבחור לפחות אפשרות אחת');
+                return;
+            }
+
+            const message = selectedOptions.join('\n');
+            sendWhatsApp('מיוחדת', message);
+        }
+
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installPrompt').style.display = 'block';
+        });
+
+        document.getElementById('installPrompt').addEventListener('click', (e) => {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    console.log('User accepted the install prompt');
+                } else {
+                    console.log('User dismissed the install prompt');
+                }
+                deferredPrompt = null;
+            });
+        });
+
+        function addPaws() {
+            for (let i = 0; i < 15; i++) {
+                const paw = document.createElement('div');
+                paw.classList.add('paw');
+                paw.innerHTML = '🐾';
+                paw.style.left = `${Math.random() * 100}vw`;
+                paw.style.animationDuration = `${15 + Math.random() * 10}s`;
+                paw.style.animationDelay = `-${Math.random() * 20}s`;
+                document.body.appendChild(paw);
+            }
+        }
+
+        function getRandomTipImage() {
+            const tipImages = [
+                'tip1.png',
+                'tip2.png',
+                'tip3.png',
+                'tip4.png',
+                'tip5.png',
+                'tip6.png'
+            ];
+            const randomIndex = Math.floor(Math.random() * tipImages.length);
+            return tipImages[randomIndex];
+        }
+
+        function setRandomTipImage() {
+            const tipImage = document.getElementById('tipImage');
+            tipImage.src = getRandomTipImage();
+        }
+
+        addPaws();
+        setRandomTipImage();
     </script>
 </body>
 </html>
