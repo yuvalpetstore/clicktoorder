@@ -64,7 +64,12 @@
             height: auto;
             margin-bottom: 20px;
         }
-        button {
+        .dropdown {
+            position: relative;
+            display: inline-block;
+            margin: 5px;
+        }
+        .dropbtn {
             font-size: 18px;
             padding: 10px 20px;
             background-color: #FFD700; /* צהוב */
@@ -72,24 +77,34 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            margin: 5px;
             transition: background-color 0.3s, transform 0.3s;
         }
-        button:hover {
+        .dropbtn:hover {
             background-color: #FFA500; /* כתום */
             transform: scale(1.05);
         }
-        #specialOrderOptions {
+        .dropdown-content {
             display: none;
-            margin-top: 10px;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 200px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 5px;
+            right: 0;
+            text-align: right;
         }
-        .checkbox-container {
-            display: flex;
-            align-items: center;
-            margin: 5px 0;
+        .dropdown-content a, .dropdown-content label {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
         }
-        .checkbox-container input {
-            margin-right: 5px;
+        .dropdown-content a:hover, .dropdown-content label:hover {
+            background-color: #f1f1f1;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
         }
         #fallbackLink {
             margin-top: 10px;
@@ -136,23 +151,42 @@
             <div class="order-box">
                 <img src="logo.png" alt="לוגו החברה" class="logo">
                 <div>
-                    <button onclick="sendWhatsApp('רגילה')" aria-label="שלח הזמנה רגילה">הזמנה רגילה</button>
-                    <button onclick="toggleSpecialOrder()" aria-label="פתח אפשרויות להזמנה מיוחדת">הזמנה מיוחדת</button>
-                </div>
-                <div id="specialOrderOptions">
-                    <div class="checkbox-container">
-                        <input type="checkbox" id="option1" value="אנא תשלחו את ההזמנה הרגילה">
-                        <label for="option1">אנא תשלחו את ההזמנה הרגילה</label>
+                    <div class="dropdown">
+                        <button class="dropbtn">חתולים</button>
+                        <div class="dropdown-content">
+                            <label>
+                                <input type="checkbox" id="catOption1" value="שלחו לי את המזון היבש הרגיל בבקשה">
+                                שלחו לי את המזון היבש הרגיל בבקשה
+                            </label>
+                            <label>
+                                <input type="checkbox" id="catOption2" value="10 שימורים במרקם פטה מיקס טעמים פולס 1 חינם ב 60 שח">
+                                10 שימורים במרקם פטה מיקס טעמים פולס 1 חינם ב 60 שח
+                            </label>
+                            <label>
+                                <input type="checkbox" id="catOption3" value="9 מעדנים מרובעים 100 גרם במרקם פטה מגוון טעמים ב 30 שח">
+                                9 מעדנים מרובעים 100 גרם במרקם פטה מגוון טעמים ב 30 שח
+                            </label>
+                            <a href="#" onclick="sendOrder('cat')">שלח הזמנה</a>
+                        </div>
                     </div>
-                    <div class="checkbox-container">
-                        <input type="checkbox" id="option2" value="הוסיפו לי 10 חטיפים במבצע של 90 שקלים">
-                        <label for="option2">הוסיפו לי 10 חטיפים במבצע של 90 שקלים</label>
+                    <div class="dropdown">
+                        <button class="dropbtn">כלבים</button>
+                        <div class="dropdown-content">
+                            <label>
+                                <input type="checkbox" id="dogOption1" value="שלחו לי את המזון היבש הרגיל">
+                                שלחו לי את המזון היבש הרגיל
+                            </label>
+                            <label>
+                                <input type="checkbox" id="dogOption2" value="10 חטיפים 80 גרם מגוון טעמים ב 90 שח">
+                                10 חטיפים 80 גרם מגוון טעמים ב 90 שח
+                            </label>
+                            <label>
+                                <input type="checkbox" id="dogOption3" value="מגוון עצמות 4 פלוס אחד חינם ב 80 שח">
+                                מגוון עצמות 4 פלוס אחד חינם ב 80 שח
+                            </label>
+                            <a href="#" onclick="sendOrder('dog')">שלח הזמנה</a>
+                        </div>
                     </div>
-                    <div class="checkbox-container">
-                        <input type="checkbox" id="option3" value="הוסיפו לי 11 שימורים לחתול ב 60 שקלים">
-                        <label for="option3">הוסיפו לי 11 שימורים לחתול ב 60 שקלים</label>
-                    </div>
-                    <button onclick="sendSpecialOrder()" aria-label="שלח הזמנה מיוחדת">שלח הזמנה מיוחדת</button>
                 </div>
                 <div id="fallbackLink" style="display: none;">
                     אם הלינק לא נפתח אוטומטית, <a href="#" id="manualLink">לחץ כאן</a> לפתיחה ידנית
@@ -162,9 +196,24 @@
     </div>
 
     <script>
+        function sendOrder(petType) {
+            const options = document.querySelectorAll(`#${petType}Option1, #${petType}Option2, #${petType}Option3`);
+            const selectedOptions = Array.from(options)
+                .filter(option => option.checked)
+                .map(option => option.value);
+
+            if (selectedOptions.length === 0) {
+                alert('נא לבחור לפחות אפשרות אחת');
+                return;
+            }
+
+            const message = selectedOptions.join('\n');
+            sendWhatsApp(petType === 'cat' ? 'חתולים' : 'כלבים', message);
+        }
+
         function sendWhatsApp(type, message = '') {
             const phoneNumber = '972098844955';
-            let finalMessage = message || `אנא תשלחו את ההזמנה ה${type}.`;
+            let finalMessage = `הזמנה ל${type}:\n${message}`;
             const encodedMessage = encodeURIComponent(finalMessage);
             
             let url = `whatsapp://send?phone=${phoneNumber}&text=${encodedMessage}`;
@@ -181,24 +230,6 @@
                 document.getElementById('fallbackLink').style.display = 'block';
                 document.getElementById('manualLink').href = url;
             }, 2000);
-        }
-
-        function toggleSpecialOrder() {
-            const specialOrderOptions = document.getElementById('specialOrderOptions');
-            specialOrderOptions.style.display = specialOrderOptions.style.display === 'none' ? 'block' : 'none';
-        }
-
-        function sendSpecialOrder() {
-            const selectedOptions = Array.from(document.querySelectorAll('#specialOrderOptions input:checked'))
-                .map(checkbox => checkbox.value);
-            
-            if (selectedOptions.length === 0) {
-                alert('נא לבחור לפחות אפשרות אחת');
-                return;
-            }
-
-            const message = selectedOptions.join('\n');
-            sendWhatsApp('מיוחדת', message);
         }
 
         function togglePlatform() {
